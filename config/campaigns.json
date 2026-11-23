@@ -2,64 +2,71 @@
   {
     "id": "calendar_fills",
     "theme": "calendar_fills",
-    "name": "A calendar that fills itself",
-    "hook": "The calendar doesn't fill itself.",
-    "second": "Until your content workflow does.",
-    "closing": "Less posting. More showing up.",
-    "caption": "Every match creates content. DateTheMoment helps organize approved images into a publishing calendar so the story continues between games.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "Calendar fills itself",
+    "hook": "THE CALENDAR FILLS.",
+    "second": "YOUR PHOTOS.",
+    "third": "A MONTH OF POSTS.",
+    "closing": "AUTOMATED.",
+    "caption": "Photo-day content shouldn't sit in a folder. Watch a club's gallery turn into planned content across its calendar.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "one_match_months",
     "theme": "one_match_months",
-    "name": "One match. More life.",
-    "hook": "One match. More than one post.",
-    "second": "A full gallery can go a lot further.",
-    "closing": "Make every frame count.",
-    "caption": "One game can create content for weeks. The best moments deserve more than a single post and a forgotten folder.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "One match becomes months",
+    "hook": "ONE GAME.",
+    "second": "DOZENS OF MOMENTS.",
+    "third": "MONTHS OF CONTENT.",
+    "closing": "BOLD.",
+    "caption": "One game is bigger than one post. Turn approved match photography into a consistent month-after-month content plan.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "club_voice",
     "theme": "club_voice",
-    "name": "Your club still sounds like your club",
-    "hook": "Automation shouldn't sound automated.",
-    "second": "Your photos. Your schedule. Your voice.",
-    "closing": "The voice stays yours.",
-    "caption": "The captions should sound like your club. Build a consistent rhythm around approved imagery and the language that fits your people.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "The PDF becomes club-voice captions",
+    "hook": "UPLOAD THE SCHEDULE.",
+    "second": "CAPTIONS TAKE SHAPE.",
+    "third": "YOUR CLUB'S VOICE.",
+    "closing": "STILL YOURS.",
+    "caption": "Your PDF schedule brings the context. Your club's voice gives the generated captions character. You approve what goes live.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "time_saved",
     "theme": "time_saved",
-    "name": "Give the hours back",
-    "hook": "A post takes minutes.",
-    "second": "A season of posts takes hours.",
-    "closing": "Give the hours back.",
-    "caption": "Pick photos. Write captions. Crop. Schedule. Repeat. DateTheMoment helps reduce repetitive social-content work across the season.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "The work runs without you",
+    "hook": "THE WORK ADDS UP.",
+    "second": "WRITE. PLAN. POST.",
+    "third": "OR LET IT RUN.",
+    "closing": "IN THE BACKGROUND.",
+    "caption": "Editing and publishing are only part of the work. A repeatable system can handle the caption-and-schedule routine while your team stays focused on sport.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "media_pipeline",
     "theme": "media_pipeline",
-    "name": "From gallery to feed",
-    "hook": "The gallery isn't the finish line.",
-    "second": "Organized. Captioned. Scheduled.",
-    "closing": "From delivered to seen.",
-    "caption": "A photo gallery should be the beginning of your sports content. Move from approved photos to organized, captioned, scheduled posts.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "Photos to publishing",
+    "hook": "PHOTOS IN.",
+    "second": "CAPTIONS READY.",
+    "third": "SCHEDULED + POSTED.",
+    "closing": "FULLY AUTOMATED.",
+    "caption": "A simple connected path: sports photography, matching captions, a filled content calendar and scheduled posts. This is DateTheMoment.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "quiet_cadence",
     "theme": "quiet_cadence",
-    "name": "Stay visible between games",
-    "hook": "Your season doesn't stop on Monday.",
-    "second": "Your content shouldn't either.",
-    "closing": "Built for the days between.",
-    "caption": "Training, effort, community and moments between games deserve a place in the feed, not only the final scoreline.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "Content runs in the background",
+    "hook": "GAME DAY ENDS.",
+    "second": "THE CONTENT CONTINUES.",
+    "third": "POSTS ON THE CALENDAR.",
+    "closing": "NO DAILY CHASING.",
+    "caption": "A steady club presence doesn't require someone opening social media every morning. Put the content workflow in the background.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   },
   {
     "id": "moments_live_on",
     "theme": "moments_live_on",
-    "name": "The moment continues",
-    "hook": "The game ends.",
-    "second": "The story keeps moving.",
-    "closing": "You live it. We keep it visible.",
-    "caption": "The final whistle isn't the end of your story. DateTheMoment keeps sports images, moments and community stories moving.\n\nLearn more: https://www.datethemoment.com/\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
+    "name": "The moment becomes a feed",
+    "hook": "CAPTURE THE MOMENT.",
+    "second": "BUILD THE STORY.",
+    "third": "TURN IT INTO CONTENT.",
+    "closing": "DATETHEMOMENT.",
+    "caption": "Sports photos deserve to be seen. One gallery can become a series of clean, ready-to-share posts that keep the moment alive.\n\n📸 → 🎥 → 📱\n\nCaptions, scheduling and posting included. Built for sports teams.\n\ndatethemoment.com\n\n#DateTheMoment #SportsMarketing #SportsPhotography"
   }
 ]

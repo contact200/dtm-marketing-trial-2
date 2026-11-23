@@ -1,7 +1,7 @@
 {
   "name": "DateTheMoment",
   "full_name": "DateTheMoment · Sports Photography & Automated Marketing",
-  "tagline": "You live the moment. DateTheMoment makes sure it doesn't disappear.",
+  "tagline": "Sports team photos become months of marketing. Fully automated. Runs in the background.",
   "website": "https://www.datethemoment.com/",
   "website_url": "https://www.datethemoment.com/",
   "email": "contact@datethemoment.com",
@@ -19,11 +19,28 @@
     "Only use owner-approved sports photos; no scraped source images.",
     "Preserve each club's voice; no generic recycled factual claims.",
     "Human approval required before publishing anything.",
-    "Trial credentials, buckets and webhooks must remain separate from production."
+    "Keep existing main-repository Make receiver; do not duplicate Supabase secrets or Telegram configuration.",
+    "No mountains, skiing, winter lodging, travel metaphors, ambient slow pacing or sleepy transitions.",
+    "Avoid unsupported promises of a fixed number of photos, posts or guaranteed growth."
   ],
   "verified_facts": [
     "Sports photography and online gallery delivery",
     "Marketing automation for existing approved sports images",
     "Instagram and Facebook publishing workflows"
+  ],
+  "style_spec": {
+    "reference": "Kosowka-like graphic simplicity ONLY, not mountain, snow, holiday or slow/cozy pacing",
+    "palette": "White-first. Ink-black headlines. Royal blue calls to action; teal/orange used sparingly. Never green.",
+    "visual_language": "Spacious geometric 2D shape-based illustrations. Light UI icons and cards, no people/hands/faces, no mountains, no decorative stock.",
+    "pacing": "Crisp kinetic text and snappy 4-scene motion in 13 seconds. Smooth ease-out snaps, not slow ambient drift.",
+    "story": "Sports photos become captions from a PDF schedule, queued calendar posts and published social content. Fully automated in the background.",
+    "brand_lockup": "DATETHEMOMENT always appears. End with BOLD. No heavy ad CTA or invented metrics."
+  },
+  "message_pillars": [
+    "We turn sports teams' photos into months of marketing.",
+    "📸 → 🎥 → 📱",
+    "PDF schedule provides context for captions.",
+    "Captions + scheduling + posting included.",
+    "Fully automated. Runs in the background. BOLD."
   ]
 }
