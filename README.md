@@ -6,13 +6,13 @@
 
 This project stays the creative source; the main repository owns the **Monday/Wednesday/Friday delivery schedule** and the existing Make webhook secret. No trial Supabase keys, new buckets, or duplicated Telegram settings are needed.
 
-The workflow in **this trial repository is preview-only** if you just want to download the MP4. It does not attempt delivery or require credentials.
+The workflow in **this trial repository is preview-only** if you just want to download the MP4. It does not attempt delivery or require credentials. Both the main and preview workflows pass the GitHub run number to rotate visual concepts across runs.
 
-Separate experimental marketing studio for DateTheMoment. Based on the same automation architecture as the Kosówka project, with **new sports-marketing concepts and a DateTheMoment design language**.
+Creative direction: Kosówka-level visual simplicity, **not** Kosówka pacing or scenery. This is fast, bold, white-first DateTheMoment marketing: sports photos becoming weeks of content, captions from a PDF schedule, scheduling and posting all within a background automation.
 
-**Outputs:** 13-second 9:16 MP4, original soundtrack, JPEG cover, English caption with hashtags, and JSON metadata. **7 distinct visual concepts × 4 copy variants = 28 combinations.** This is a finite deterministic rotation, not an AI-powered never-repeating concept generator.
+**Outputs:** 13-second 9:16 MP4, custom rhythmic sound effects, JPEG cover, English caption with hashtags, and JSON metadata. **7 different graphic concepts × 4 unique copy variants = 28 combinations.** Main-repo GitHub run number selects the next concept, so consecutive runs no longer repeat the same scene family. This is a finite deterministic rotation, not an AI-powered infinite-concept engine.
 
-**Colors:** white, black, royal blue with occasional teal or orange — never green. Motion graphics contain no synthetic people, faces or hands. Approved sports photographs can be used in full-bleed mode.
+**Colors:** spacious white, black lettering, royal blue highlights. Only occasionally teal or orange; never green. **Four quick, legible story beats instead of slow ambient fades**. No mountains, ski footage, winter imagery, fake people, faces or hands. Approved sports photos can optionally replace graphic diagram backdrops.
 
 ## First reel (works on iPad)
 
@@ -23,15 +23,15 @@ Scheduled generation and Make delivery happen in the **main repo's new workflow*
 ## 7 visual concepts
 | ID | Visual mechanism |
 |---|---|
-| `calendar_fills` | A calendar that fills itself |
-| `one_match_months` | One match. More life. |
-| `club_voice` | Your club still sounds like your club |
-| `time_saved` | Give the hours back |
-| `media_pipeline` | From gallery to feed |
-| `quiet_cadence` | Stay visible between games |
-| `moments_live_on` | The moment continues |
+| `calendar_fills` | Content calendar rapidly fills with scheduled photo posts |
+| `one_match_months` | One sports gallery expands into weeks of posts |
+| `club_voice` | PDF schedule becomes team-specific captions |
+| `time_saved` | Repetitive marketing tasks become background jobs |
+| `media_pipeline` | PHOTOS → CAPTIONS → SCHEDULE → POST |
+| `quiet_cadence` | Background publishing rhythm keeps the calendar active |
+| `moments_live_on` | Match moments transform into an ongoing social feed |
 
-The campaign progression is calendar tiles → one match into many assets → club voice signal → time dial → gallery-to-feed pipeline → day-to-day rhythm → sports-photo frames. They are distinct motion concepts, not re-skinned mountain ads.
+All seven mechanisms are visually distinct: calendar-grid population, gallery multiplication, PDF-to-caption conversion, task-list completion, a four-stage publishing pipeline, weekly publishing rhythm, and gallery-to-feed transfer. The branding and typography are consistent. **None are travel, mountain or lodging ads.**
 
 ## Approved photo mode
 

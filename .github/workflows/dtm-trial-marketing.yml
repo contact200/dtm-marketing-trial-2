@@ -49,7 +49,7 @@ jobs:
         env:
           CONCEPT: ${{ inputs.concept || 'auto' }}
           VISUAL_MODE: ${{ inputs.visual_mode || 'auto' }}
-        run: python scripts/render.py --concept "$CONCEPT" --visual-mode "$VISUAL_MODE" --size 1080x1920 --fps 24 --seconds 13 --output outputs/latest
+        run: python scripts/render.py --concept "$CONCEPT" --visual-mode "$VISUAL_MODE" --sequence "$GITHUB_RUN_NUMBER" --size 1080x1920 --fps 24 --seconds 13 --output outputs/latest
       - name: Explain how to send to Telegram
         run: |
           echo "### Preview only — no duplicate Supabase / Make secrets" >> "$GITHUB_STEP_SUMMARY"
