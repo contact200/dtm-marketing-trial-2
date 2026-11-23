@@ -8,7 +8,7 @@ Separate experimental marketing studio for DateTheMoment. Based on the same auto
 
 ## First reel (works on iPad)
 
-Open [GitHub Actions](https://github.com/contact200/dtm-marketing-trial-2/actions) → **DateTheMoment Trial Social Studio** → **Run workflow**. Use `concept=auto`, `visual_mode=auto`, `deliver_to_make=false`. Download the completed **dtm-trial-social** artifact: `reel.mp4`, `cover.jpg`, `caption.txt`, `payload.json`.
+Open [GitHub Actions](https://github.com/contact200/dtm-marketing-trial-2/actions) → **DateTheMoment Trial Social Studio** → **Run workflow**. Use `concept=auto`, `visual_mode=auto`, `deliver_to_make=false` for a local GitHub artifact only. To also deliver to Telegram through Make, configure the credentials below and use `deliver_to_make=true`. Download the completed **dtm-trial-social** artifact: `reel.mp4`, `cover.jpg`, `caption.txt`, `payload.json`.
 
 Scheduled generation happens **Monday, Wednesday and Friday at 15:00 UTC** (9 AM Chicago in winter, 10 AM in summer). Artifacts are drafts for review. **No auto-posting occurs.**
 
@@ -35,12 +35,14 @@ You may also specify an **owner-controlled HTTPS URL** with `url`, `approved` an
 
 ## Optional Make + Supabase approval delivery
 
-The project runs without secrets. For a separate trial approval queue, create a **public Supabase Storage bucket** named `dtm-trial-2-public`. In repo **Settings → Secrets and variables → Actions**, add:
+Preview rendering works without secrets. **A delivery-enabled run now errors clearly if connection secrets are missing.** For Telegram delivery, the trial can reuse the working **DateTheMoment — Video Receiver** in Make (JSON → Sheets → Telegram), but needs its own GitHub secret configuration. Create a public Supabase Storage bucket named `dtm-trial-2-public`, or set the variable below to the existing public bucket if you wish to reuse it. In repo **Settings → Secrets and variables → Actions**, add:
 - `DTM_TRIAL_SUPABASE_URL` (secret)
 - `DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY` (secret, do not commit)
-- `DTM_TRIAL_MAKE_WEBHOOK_URL` (secret, **new trial webhook**, not the production hook)
+- `DTM_TRIAL_MAKE_WEBHOOK_URL` (secret: paste the URL of your existing working **DateTheMoment — Video Receiver** webhook, which sends review messages to Telegram)
 
-Optional repo variables: `DTM_TRIAL_SUPABASE_BUCKET=dtm-trial-2-public`, and `DTM_TRIAL_AUTO_DELIVER_TO_MAKE=true` to send scheduled drafts for approval. **Leave auto delivery off** until the Make scenario accepts drafts safely. Run manually with `deliver_to_make=true` to upload MP4/JPG to the separate public bucket and post a JSON review request containing `video_url`, `cover_url`, `caption`, `campaign_id`, `visual_mode`, `approval_required=true`, and `status=pending_approval`. The public URLs are only real after successful upload. Source photos are never sent to the public bucket. Do not connect this Make webhook directly to an Instagram Publish module.
+Optional repo variables: `DTM_TRIAL_SUPABASE_BUCKET=dtm-trial-2-public`, and `DTM_TRIAL_AUTO_DELIVER_TO_MAKE=true` to send scheduled drafts for approval. **Leave auto delivery off** until the Make scenario accepts drafts safely. Run manually with `deliver_to_make=true` to upload MP4/JPG to the configured public bucket and send JSON containing the receiver-required fields `concept_id`, `video_url`, `social_caption`, along with `creative_angle`, `render_run_id`, `cover_url`, `caption`, `campaign_id`, `visual_mode`, `approval_required=true`, and `status=pending_approval`. Ensure the existing receiver scenario is active and ends with **Notify video ready for review** in Telegram. If it uses a filter, keep `concept_id`, `video_url` and `social_caption` as the three required fields. The public URLs are only real after successful upload. Source photos are never sent to the public bucket. Do not connect this Make webhook directly to an Instagram Publish module.
+
+**On iPad:** [Open this repo's GitHub Actions secrets](https://github.com/contact200/dtm-marketing-trial-2/settings/secrets/actions). GitHub does not let you read or copy secrets from another repository, so enter the values again using your own Make webhook URL and Supabase credentials. Never paste service-role credentials in a chat, commit or README.
 
 ## Local test
 Python 3.12 + FFmpeg:
