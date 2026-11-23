@@ -14,9 +14,9 @@ on:
         type: choice
         options: [auto, motion_graphic, full_bleed_photo]
       deliver_to_make:
-        description: 'Send to trial approval queue'
+        description: 'Send video to Make for Telegram review (requires GitHub secrets)'
         required: true
-        default: false
+        default: true
         type: boolean
   schedule:
     - cron: '0 15 * * 1,3,5'
@@ -42,7 +42,7 @@ jobs:
           CONCEPT: ${{ inputs.concept || 'auto' }}
           VISUAL_MODE: ${{ inputs.visual_mode || 'auto' }}
         run: python scripts/render.py --concept "$CONCEPT" --visual-mode "$VISUAL_MODE" --size 1080x1920 --fps 24 --seconds 13 --output outputs/latest
-      - name: Optional Make approval handoff
+      - name: Make / Telegram review handoff (manual default ON)
         env:
           DTM_TRIAL_SUPABASE_URL: ${{ secrets.DTM_TRIAL_SUPABASE_URL }}
           DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY }}
