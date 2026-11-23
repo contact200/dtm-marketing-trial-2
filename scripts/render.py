@@ -54,57 +54,8 @@ def fill_gradient(w,h,a,b):
     return im
 
 def artwork_base(theme,w,h):
-    white=COLORS["white"];blue=COLORS["blue"];ink=COLORS["ink"];teal=COLORS["teal"];orange=COLORS["orange"]
-    dark=theme in ("one_match_months","media_pipeline")
-    im=fill_gradient(w,h,(18,42,144),(8,14,34)) if dark else fill_gradient(w,h,white,(232,238,255))
-    d=ImageDraw.Draw(im)
-    if theme=="calendar_fills":
-        for row in range(5):
-            for col in range(7):
-                x=w*(.08+col*.12);y=h*(.29+row*.083)
-                active=((row*11+col*7)%9)<6
-                d.rounded_rectangle((x,y,x+w*.105,y+h*.072),radius=max(5,w//85),fill=blue if active else COLORS["pale"],outline=(195,209,247),width=2)
-                if active:d.line((x+w*.018,y+h*.022,x+w*.074,y+h*.022),fill=(212,225,255),width=max(2,w//230))
-    elif theme=="one_match_months":
-        cx,cy=w*.5,h*.48
-        d.ellipse((cx-w*.16,cy-w*.095,cx+w*.16,cy+w*.095),fill=white)
-        d.rounded_rectangle((cx-w*.055,cy-h*.018,cx+w*.055,cy+h*.018),radius=w//40,fill=blue)
-        for j in range(18):
-            a=j*math.tau/18;r=w*(.29 if j%2 else .36)
-            x=cx+math.cos(a)*r;y=cy+math.sin(a)*r*1.42
-            d.line((cx,cy,x,y),fill=(74,107,198),width=max(2,w//200))
-            d.rounded_rectangle((x-w*.03,y-w*.03,x+w*.03,y+w*.03),radius=w//110,fill=orange if j%5==0 else (149,182,255))
-    elif theme=="club_voice":
-        d.rounded_rectangle((w*.09,h*.33,w*.91,h*.62),radius=w//35,fill=white,outline=(185,205,249),width=3)
-        for j in range(26):
-            x=w*(.135+j*.029);amp=h*(.025+abs(math.sin(j*1.31))*.10)
-            d.rounded_rectangle((x,h*.47-amp/2,x+w*.013,h*.47+amp/2),radius=max(2,w//180),fill=blue if j%4 else teal)
-    elif theme=="time_saved":
-        cx,cy=w*.5,h*.455;r=w*.28
-        d.ellipse((cx-r,cy-r,cx+r,cy+r),outline=blue,width=max(8,w//50))
-        for j in range(12):
-            a=j*math.tau/12
-            d.line((cx+math.sin(a)*r*.76,cy-math.cos(a)*r*.76,cx+math.sin(a)*r*.90,cy-math.cos(a)*r*.90),fill=ink,width=max(3,w//200))
-        d.line((cx,cy,cx-w*.10,cy-h*.08),fill=ink,width=max(5,w//90))
-    elif theme=="media_pipeline":
-        for j,label in enumerate(["GALLERY","CAPTIONS","CALENDAR"]):
-            y=h*(.29+j*.14)
-            d.rounded_rectangle((w*.10,y,w*.90,y+h*.111),radius=w//34,fill=(231,239,255) if j==2 else (46,78,170),outline=(105,138,236),width=3)
-            d.rounded_rectangle((w*.14,y+h*.03,w*.225,y+h*.08),radius=10,fill=orange if j==2 else teal)
-            d.text((w*.26,y+h*.04),label,font=font(w*.044,True),fill=ink if j==2 else white)
-            if j<2:d.line((w*.5,y+h*.11,w*.5,y+h*.14),fill=teal,width=max(5,w//145))
-    elif theme=="quiet_cadence":
-        for j,day in enumerate("MTWTFSS"):
-            x=w*(.11+j*.112);hh=h*(.105+(j%3)*.05)
-            d.rounded_rectangle((x,h*.58-hh,x+w*.076,h*.58),radius=w//35,fill=blue if j%3 else teal)
-            d.text((x+w*.038,h*.61),day,font=font(w*.035,True),fill=ink,anchor="mm")
-    elif theme=="moments_live_on":
-        for j,(x,y) in enumerate([(.10,.32),(.36,.25),(.62,.35)]):
-            xx=w*x;yy=h*y
-            d.rounded_rectangle((xx,yy,xx+w*.29,yy+h*.26),radius=w//35,fill=(244,248,255),outline=blue if j==1 else (181,199,243),width=max(3,w//210))
-            d.polygon([(xx+w*.03,yy+h*.21),(xx+w*.10,yy+h*.13),(xx+w*.16,yy+h*.18),(xx+w*.23,yy+h*.10),(xx+w*.26,yy+h*.21)],fill=(150,174,240))
-            d.ellipse((xx+w*.18,yy+h*.063,xx+w*.23,yy+h*.093),fill=orange)
-    return im
+    """White-first, spacious diagram canvas. No gradients or decorative scenery."""
+    return Image.new("RGB",(w,h),COLORS["white"])
 
 def photo_candidates():
     cfg=json.loads((ROOT/"config/photos.json").read_text(encoding="utf-8"))
@@ -129,66 +80,170 @@ def make_photo_layer(path,w,h):
             return Image.blend(img,Image.new("RGB",(w,h),COLORS["ink"]),.19)
     except Exception:return None
 
-def text_layer(base,theme,scene,campaign,brand,w,h,p,is_photo=False):
-    overlay=Image.new("RGBA",(w,h));d=ImageDraw.Draw(overlay)
-    dark=theme in ("one_match_months","media_pipeline") or is_photo
-    fg=COLORS["white"] if dark else COLORS["ink"]
-    accent=COLORS["orange"] if dark else COLORS["blue"]
-    margin=int(w*.083);alpha=max(0,min(255,int(255*smooth(p/.15)*smooth((1-p)/.1))))
-    if scene==0:msg=campaign["hook"];y=int(h*.15);sub="THE CONTENT STUDIO"
-    elif scene==1:msg=campaign["second"];y=int(h*.704);sub=campaign["name"].upper()
-    else:msg=campaign["closing"];y=int(h*.44);sub="SPORTS CONTENT. ON YOUR TERMS."
-    ft,lines,sz=fit_lines(d,msg,w*.80,4,w*.086,w*.046,True)
-    lh=int(sz*1.19);height=len(lines)*lh
-    d.rounded_rectangle((margin-w*.025,y-sz*.33,w-margin+w*.01,y+height+sz*.94),radius=w//40,fill=(7,13,29,int(alpha*.87)) if dark else (255,255,255,int(alpha*.90)))
-    d.rounded_rectangle((margin,y-sz*.17,margin+w*.085,y-sz*.105),radius=4,fill=(*accent,alpha))
-    for i,line in enumerate(lines):
-        dy=int((1-smooth(p/.21))*w*.05)
-        d.text((margin,y+i*lh+dy),line,font=ft,fill=(*fg,alpha))
-    d.text((margin,y+height+sz*.19),sub,font=font(w*.025,True),fill=(*(COLORS["pale"] if dark else COLORS["slate"]),alpha))
-    d.text((margin,h*.064),"DATE THE MOMENT",font=font(w*.052,True),fill=(*fg,240))
-    d.text((margin,h*.104),"THE SOCIAL CONTENT STUDIO",font=font(w*.024),fill=(*(COLORS["pale"] if dark else COLORS["slate"]),225))
-    d.rounded_rectangle((margin,h*.91,margin+w*.067,h*.917),radius=3,fill=(*accent,240))
-    d.text((margin,h*.937),"DATETHEMOMENT.COM",font=font(w*.029,True),fill=(*fg,235))
-    return Image.alpha_composite(base.convert("RGBA"),overlay).convert("RGB")
+def clamp(value, a=0., b=1.):
+    return max(a,min(b,value))
 
 def scene_for(t,seconds):
-    x=t/seconds
-    if x<.34:return 0,x/.34
-    if x<.75:return 1,(x-.34)/.41
-    return 2,(x-.75)/.25
+    """Four energetic, highly readable beats over a 13-second reel."""
+    x=clamp(t/seconds)
+    bounds=(0.,.23,.485,.76,1.)
+    for i in range(4):
+        if x<bounds[i+1] or i==3:
+            return i,clamp((x-bounds[i])/(bounds[i+1]-bounds[i]))
+    return 3,1.
+
+def draw_ball(d,x,y,r,color):
+    width=max(2,int(r*.11))
+    d.ellipse((x-r,y-r,x+r,y+r),outline=color,width=width)
+    d.line((x-r*.85,y,x+r*.85,y),fill=color,width=width)
+    d.arc((x-r*.48,y-r,x+r*.48,y+r),90,270,fill=color,width=width)
+    d.arc((x-r*.48,y-r,x+r*.48,y+r),270,90,fill=color,width=width)
+
+def draw_photo_tile(d,x,y,w,h,accent=False):
+    radius=max(5,int(w*.13))
+    d.rounded_rectangle((x,y,x+w,y+h),radius=radius,fill=(225,235,255) if accent else (239,244,253),outline=COLORS["blue"] if accent else (202,216,243),width=max(2,int(w*.025)))
+    draw_ball(d,x+w*.5,y+h*.43,min(w*.18,h*.22),COLORS["blue"])
+    d.rounded_rectangle((x+w*.17,y+h*.77,x+w*.73,y+h*.815),radius=3,fill=(165,184,224))
+
+def draw_card(d,x,y,w,h,label,active=False,bold=True):
+    fill=COLORS["blue"] if active else (245,248,254)
+    fg=COLORS["white"] if active else COLORS["ink"]
+    d.rounded_rectangle((x,y,x+w,y+h),radius=max(9,int(w*.085)),fill=fill,outline=None if active else (216,226,246),width=max(2,int(w*.013)))
+    f=font(w*.083,bold)
+    bbox=d.textbbox((0,0),label,font=f)
+    tw=bbox[2]-bbox[0]
+    d.text((x+(w-tw)/2,y+h*.5),label,font=f,fill=fg,anchor="lm")
+
+def draw_illustration(d,theme,scene,p,w,h):
+    """Seven separate clean marketing mechanisms. Motion lives INSIDE the diagram."""
+    blue=COLORS["blue"];ink=COLORS["ink"];pale=(225,235,255)
+    x0,y0=w*.095,h*.39
+    pw,ph=w*.81,h*.315
+    progress=smooth(clamp(p*1.14))
+    if theme=="calendar_fills":
+        n=28
+        cell=w*.096;gap=w*.014
+        ox=w*.11;oy=h*.37
+        for j in range(n):
+            row,col=divmod(j,7)
+            x=ox+col*(cell+gap);y=oy+row*(h*.078)
+            filled=j<int(progress*(n+2))
+            d.rounded_rectangle((x,y,x+cell,y+h*.067),radius=max(5,int(cell*.17)),fill=blue if filled else pale)
+            if filled:
+                d.rounded_rectangle((x+cell*.24,y+h*.026,x+cell*.72,y+h*.034),radius=3,fill=COLORS["white"])
+        d.text((w*.12,h*.74),"POSTS, PLANNED.",font=font(w*.038,True),fill=blue)
+    elif theme=="one_match_months":
+        draw_photo_tile(d,w*.10,h*.43,w*.26,h*.215,True)
+        d.line((w*.40,h*.545,w*.51,h*.545),fill=blue,width=max(4,w//130))
+        d.polygon([(w*.50,h*.535),(w*.525,h*.545),(w*.50,h*.555)],fill=blue)
+        count=1+int(progress*11)
+        for j in range(12):
+            row,col=divmod(j,4)
+            x=w*(.56+col*.082);y=h*(.405+row*.085)
+            d.rounded_rectangle((x,y,x+w*.066,y+h*.067),radius=max(3,w//120),fill=blue if j<count else pale)
+            if j<count:d.line((x+w*.013,y+h*.022,x+w*.05,y+h*.022),fill=COLORS["white"],width=max(2,w//220))
+        d.text((w*.56,h*.73),"WEEKS OF POSTS",font=font(w*.03,True),fill=blue)
+    elif theme=="club_voice":
+        d.rounded_rectangle((w*.115,h*.425,w*.405,h*.665),radius=w//30,fill=(239,244,253),outline=pale,width=3)
+        d.rounded_rectangle((w*.155,h*.455,w*.275,h*.495),radius=w//120,fill=blue)
+        d.text((w*.172,h*.462),"PDF",font=font(w*.041,True),fill=COLORS["white"])
+        for j in range(4):
+            yy=h*(.525+j*.027)
+            d.line((w*.155,yy,w*(.35 if j%2 else .30),yy),fill=(177,193,225),width=max(3,w//180))
+        d.line((w*.445,h*.55,w*.54,h*.55),fill=blue,width=max(4,w//125))
+        d.polygon([(w*.525,h*.54),(w*.545,h*.55),(w*.525,h*.56)],fill=blue)
+        for j,label in enumerate(("MATCH DAY","CAPTION","CLUB VOICE")):
+            active=j<=int(progress*3)
+            draw_card(d,w*.58,h*(.415+j*.087),w*.32,h*.068,label,active)
+    elif theme=="time_saved":
+        for j,label in enumerate(("PICK PHOTOS","WRITE CAPTION","PLAN POSTS","PUBLISH")):
+            y=h*(.39+j*.076)
+            complete=j<int(progress*5)
+            d.rounded_rectangle((w*.13,y,w*.87,y+h*.06),radius=w//48,fill=(229,236,252) if not complete else blue)
+            d.text((w*.19,y+h*.03),label,font=font(w*.041,True),fill=COLORS["white"] if complete else ink,anchor="lm")
+            if complete:
+                d.ellipse((w*.78,y+h*.019,w*.82,y+h*.046),fill=COLORS["white"])
+        d.text((w*.21,h*.74),"BACKGROUND RUNNING",font=font(w*.034,True),fill=blue)
+    elif theme=="media_pipeline":
+        labels=("PHOTOS","CAPTIONS","SCHEDULE","POST")
+        for j,label in enumerate(labels):
+            active=j<=int(progress*4)
+            xx=w*(.115+(j%2)*.412); yy=h*(.395+(j//2)*.166)
+            draw_card(d,xx,yy,w*.358,h*.115,label,active)
+        d.line((w*.47,h*.451,w*.525,h*.451),fill=blue,width=max(4,w//160))
+        d.polygon([(w*.516,h*.439),(w*.536,h*.451),(w*.516,h*.463)],fill=blue)
+        d.line((w*.70,h*.51,w*.70,h*.56),fill=blue,width=max(4,w//160))
+        d.line((w*.47,h*.616,w*.525,h*.616),fill=blue,width=max(4,w//160))
+        d.polygon([(w*.516,h*.604),(w*.536,h*.616),(w*.516,h*.628)],fill=blue)
+        d.text((w*.22,h*.752),"ONE CONNECTED FLOW",font=font(w*.034,True),fill=blue)
+    elif theme=="quiet_cadence":
+        day_labels=("MON","TUE","WED","THU","FRI","SAT","SUN")
+        for j,label in enumerate(day_labels):
+            x=w*(.107+j*.113)
+            d.text((x,h*.375),label,font=font(w*.025,True),fill=COLORS["slate"])
+        for j in range(21):
+            row,col=divmod(j,7)
+            x=w*(.11+col*.113);y=h*(.413+row*.091)
+            active=j<int(progress*22)
+            d.rounded_rectangle((x,y,x+w*.084,y+h*.067),radius=w//60,fill=blue if active else pale)
+            if active:d.ellipse((x+w*.031,y+h*.024,x+w*.053,y+h*.04),fill=COLORS["white"])
+        d.rounded_rectangle((w*.12,h*.728,w*.88,h*.779),radius=w//55,fill=pale)
+        d.ellipse((w*.155,h*.741,w*.184,h*.764),fill=blue)
+        d.text((w*.215,h*.738),"AUTO-SCHEDULE ACTIVE",font=font(w*.036,True),fill=ink)
+    elif theme=="moments_live_on":
+        k=int(progress*3.9)
+        for j in range(3):
+            x=w*(.115+j*.225);y=h*(.425+(j%2)*.063)
+            draw_photo_tile(d,x,y,w*.23,h*.175,j<k)
+        d.line((w*.39,h*.685,w*.59,h*.685),fill=blue,width=max(4,w//120))
+        d.polygon([(w*.576,h*.676),(w*.60,h*.685),(w*.576,h*.695)],fill=blue)
+        d.rounded_rectangle((w*.665,h*.616,w*.89,h*.779),radius=w//35,fill=pale,outline=blue,width=max(3,w//150))
+        d.rounded_rectangle((w*.69,h*.643,w*.864,h*.727),radius=w//70,fill=blue)
+        d.line((w*.70,h*.75,w*.83,h*.75),fill=(150,173,226),width=max(2,w//185))
+    else:
+        draw_card(d,x0,y0,pw,ph,"SPORTS CONTENT",True)
+
+def text_layer(base,theme,scene,campaign,brand,w,h,p,is_photo=False):
+    overlay=Image.new("RGBA",(w,h),(0,0,0,0))
+    d=ImageDraw.Draw(overlay)
+    fg=COLORS["white"] if is_photo else COLORS["ink"]
+    blue=COLORS["blue"]
+    accent=COLORS["white"] if is_photo else blue
+    left=int(w*.09)
+    messages=(campaign["hook"],campaign["second"],campaign["third"],campaign["closing"])
+    message=messages[scene]
+    alpha=int(255*smooth(p/.085)*smooth((1-p)/.085))
+    if scene==3:
+        y=h*.31
+        if not is_photo:
+            d.rounded_rectangle((w*.082,h*.448,w*.918,h*.602),radius=w//22,fill=(*blue,int(alpha*.99)))
+            d.text((w*.50,h*.526),"FULLY AUTOMATED",font=font(w*.059,True),fill=(255,255,255,alpha),anchor="mm")
+    else:
+        y=h*.178
+    if is_photo:
+        d.rounded_rectangle((left-w*.026,y-w*.031,w-left+w*.021,y+h*.165),radius=w//45,fill=(4,12,33,int(alpha*.83)))
+    f,lines,size=fit_lines(d,message,w*.81,3,w*.088,w*.054,True)
+    lineheight=int(size*1.19)
+    shift=(1-smooth(p/.16))*w*.058
+    for i,line in enumerate(lines):
+        d.text((left,y+i*lineheight+shift),line,font=f,fill=(*fg,alpha))
+    d.rounded_rectangle((left,y+len(lines)*lineheight+w*.03,left+w*.11,y+len(lines)*lineheight+w*.04),radius=3,fill=(*accent,alpha))
+    d.text((left,h*.065),"DATETHEMOMENT",font=font(w*.059,True),fill=(*fg,245))
+    d.text((left,h*.107),"PHOTOS / CAPTIONS / SCHEDULING / POSTS",font=font(w*.025,True),fill=(*accent,225))
+    footer="BOLD.  /  RUNS IN THE BACKGROUND."
+    d.text((left,h*.855),footer,font=font(w*.035,True),fill=(*fg,alpha))
+    for j in range(4):
+        xx=w*(.09+j*.208)
+        d.rounded_rectangle((xx,h*.916,xx+w*.177,h*.923),radius=w//110,fill=(*(accent if j<=scene else fg),int(alpha if j<=scene else alpha*.18)))
+    d.text((left,h*.955),"DATETHEMOMENT.COM",font=font(w*.028,True),fill=(*fg,220))
+    return Image.alpha_composite(base.convert("RGBA"),overlay).convert("RGB")
 
 def render_frame(base,campaign,brand,theme,w,h,t,seconds,photo=None):
     scene,p=scene_for(t,seconds)
-    active_photo=(photo[scene] if isinstance(photo,list) else photo) if photo is not None else None
+    active_photo=(photo[scene%len(photo)] if isinstance(photo,list) else photo) if photo is not None else None
     img=(active_photo if active_photo is not None else base).copy()
-    d=ImageDraw.Draw(img)
     if active_photo is None:
-        progress=smooth(t/seconds)
-        if theme=="calendar_fills":
-            col=int(progress*6.9);row=int(t*1.7)%5
-            x=w*(.08+col*.12);y=h*(.29+row*.083)
-            d.rounded_rectangle((x,y,x+w*.105,y+h*.072),radius=w//85,outline=COLORS["orange"],width=max(5,w//135))
-        elif theme=="club_voice":
-            for j in range(7):
-                x=w*(.19+j*.085);amp=h*.04*abs(math.sin(t*3+j))
-                d.line((x,h*.475-amp,x,h*.475+amp),fill=COLORS["orange"],width=max(4,w//140))
-        elif theme=="time_saved":
-            cx,cy=w*.5,h*.455;a=t*.7;r=w*.22
-            d.line((cx,cy,cx+math.sin(a)*r,cy-math.cos(a)*r),fill=COLORS["orange"],width=max(5,w//110))
-        elif theme=="quiet_cadence":
-            x=w*(.11+(int(t*1.7)%7)*.112)
-            d.ellipse((x,h*.64,x+w*.05,h*.67),fill=COLORS["orange"])
-        elif theme=="moments_live_on":
-            j=int(t*1.4)%3;x=w*[.10,.36,.62][j];y=h*[.32,.25,.35][j]
-            d.rounded_rectangle((x,y,x+w*.29,y+h*.26),radius=w//35,outline=COLORS["orange"],width=max(5,w//135))
-        elif theme=="one_match_months":
-            cx,cy=w*.5,h*.48;a=t*1.3
-            x=cx+math.cos(a)*w*.31;y=cy+math.sin(a)*w*.38
-            d.ellipse((x-w*.025,y-w*.025,x+w*.025,y+w*.025),fill=COLORS["orange"])
-        elif theme=="media_pipeline":
-            y=h*(.29+progress*.41)
-            d.ellipse((w*.92,y,w*.955,y+h*.02),fill=COLORS["orange"])
+        draw_illustration(ImageDraw.Draw(img),theme,scene,p,w,h)
     return text_layer(img,theme,scene,campaign,brand,w,h,p,active_photo is not None)
 
 def select_campaign(campaigns,requested,date):
@@ -218,6 +273,7 @@ def main():
     ap.add_argument("--size",type=parse_size,default=(1080,1920))
     ap.add_argument("--fps",type=int,default=24)
     ap.add_argument("--seconds",type=float,default=13)
+    ap.add_argument("--sequence",type=int,default=None,help="Unique GitHub run sequence; auto cycles through distinct concepts")
     ap.add_argument("--no-video",action="store_true")
     ap.add_argument("--no-audio",action="store_true")
     args=ap.parse_args()
@@ -225,17 +281,17 @@ def main():
     w,h=args.size;out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=True)
     brand=json.loads((ROOT/"config/brand.json").read_text(encoding="utf-8"))
     campaigns=json.loads((ROOT/"config/campaigns.json").read_text(encoding="utf-8"))
-    c=dict(select_campaign(campaigns,args.concept,args.date))
+    c=dict(campaigns[args.sequence%len(campaigns)] if args.concept=="auto" and args.sequence is not None else select_campaign(campaigns,args.concept,args.date))
     bank=json.loads((ROOT/"config/copy_variations.json").read_text(encoding="utf-8"))
     day=dt.date.fromisoformat(args.date)
     cycle=((day-dt.date(2026,11,23)).days//7)*3+{0:0,2:1,4:2}.get(day.weekday(),min(2,day.weekday()//2))
-    variant_index=(cycle//len(campaigns))%4 if args.concept=="auto" else (day.toordinal()//7)%4
+    variant_index=((args.sequence//len(campaigns))%4 if args.sequence is not None else (cycle//len(campaigns))%4) if args.concept=="auto" else (day.toordinal()//7)%4
     if variant_index:c.update(bank[c["id"]][variant_index-1])
     photos=photo_candidates()
     if args.visual_mode=="full_bleed_photo" and not photos:ap.error("full_bleed_photo requires at least one approved photo")
     visual_mode=args.visual_mode
     if visual_mode=="auto":visual_mode="full_bleed_photo" if photos and c["theme"] in ("moments_live_on","one_match_months") else "motion_graphic"
-    chosen=[photos[(day.toordinal()*3+j)%len(photos)] for j in range(3)] if visual_mode=="full_bleed_photo" else []
+    chosen=[photos[(day.toordinal()*4+j)%len(photos)] for j in range(4)] if visual_mode=="full_bleed_photo" else []
     layers=[make_photo_layer(p,w,h) for p in chosen] if chosen else None
     if layers and any(x is None for x in layers):ap.error("Could not decode an approved photo")
     base=artwork_base(c["theme"],w,h)
@@ -245,8 +301,8 @@ def main():
     payload={"business":brand["name"],"language":"en-US","campaign_id":c["id"],"concept_family":c["theme"],
         "visual_mode":visual_mode,"copy_variant":variant_index,"date":args.date,"caption":c["caption"],
         "creative_angle":c["name"],"creative_hook":c["hook"],
-        "on_screen_text":" | ".join((c["hook"],c["second"],c["closing"])),
-        "website_url":brand["website"],"status":"pending_approval","approval_required":True,
+        "on_screen_text":" | ".join((c["hook"],c["second"],c["third"],c["closing"])),
+        "website_url":brand["website"],"status":"pending_approval","approval_required":True,"creative_sequence":args.sequence,
         "photo_count":len(chosen),"video_file":"reel.mp4" if not args.no_video else None,
         "cover_file":"cover.jpg","source_attribution":[str(p.relative_to(ROOT)) for p in chosen] if chosen else ["original abstract motion graphics"]}
     if not args.no_video:
