@@ -246,11 +246,13 @@ def render_frame(base,campaign,brand,theme,w,h,t,seconds,photo=None):
         draw_illustration(ImageDraw.Draw(img),theme,scene,p,w,h)
     return text_layer(img,theme,scene,campaign,brand,w,h,p,active_photo is not None)
 
-def select_campaign(campaigns,requested,date):
+def select_campaign(campaigns,requested,date,sequence=None):
     byid={c["id"]:c for c in campaigns}
     if requested!="auto":
         if requested not in byid:raise SystemExit("Unknown campaign: "+requested)
         return byid[requested]
+    if sequence is not None:
+        return campaigns[sequence%len(campaigns)]
     d=dt.date.fromisoformat(date);anchor=dt.date(2026,11,23)
     week=(d-anchor).days//7
     slot={0:0,2:1,4:2}.get(d.weekday(),min(2,d.weekday()//2))
@@ -281,7 +283,7 @@ def main():
     w,h=args.size;out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=True)
     brand=json.loads((ROOT/"config/brand.json").read_text(encoding="utf-8"))
     campaigns=json.loads((ROOT/"config/campaigns.json").read_text(encoding="utf-8"))
-    c=dict(campaigns[args.sequence%len(campaigns)] if args.concept=="auto" and args.sequence is not None else select_campaign(campaigns,args.concept,args.date))
+    c=dict(select_campaign(campaigns,args.concept,args.date,args.sequence))
     bank=json.loads((ROOT/"config/copy_variations.json").read_text(encoding="utf-8"))
     day=dt.date.fromisoformat(args.date)
     cycle=((day-dt.date(2026,11,23)).days//7)*3+{0:0,2:1,4:2}.get(day.weekday(),min(2,day.weekday()//2))
