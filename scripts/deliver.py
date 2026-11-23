@@ -37,28 +37,42 @@ def main():
     webhook=os.getenv("DTM_TRIAL_MAKE_WEBHOOK_URL","")
     enabled=os.getenv("DTM_TRIAL_DELIVER_TO_MAKE","").strip().lower()=="true"
     if not enabled:
-        print("Tryb podglądu. Brak wysyłki do Make.")
+        print("Preview only: Make and Telegram delivery disabled.")
         return
     if not(base and service and webhook):
-        print("Nie skonfigurowano wszystkich sekretów — materiały zostają jako artefakt GitHub Actions.")
-        return
+        missing=[name for name,value in (
+            ("DTM_TRIAL_SUPABASE_URL",base),
+            ("DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY",service),
+            ("DTM_TRIAL_MAKE_WEBHOOK_URL",webhook),
+        ) if not value]
+        raise SystemExit("Delivery was requested, but required GitHub Actions secrets are missing: "+", ".join(missing))
     if not (out/"reel.mp4").is_file():
-        raise SystemExit("Brak gotowego reel.mp4")
+        raise SystemExit("Make delivery requested but reel.mp4 is missing")
     stamp=os.getenv("GITHUB_RUN_ID",datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S"))
     name=f"{payload['date']}/{payload['campaign_id']}/{stamp}"
     video=upload(base,service,bucket,out/"reel.mp4",name)
     cover=upload(base,service,bucket,out/"cover.jpg",name)
     payload.update({
-        "video_url":video,"cover_url":cover,
-        "status":"pending_approval","approval_required":True,
-        "source":"dtm-marketing-trial-2","event":"content_ready_for_review"
+        "video_url":video, "cover_url":cover,
+        "concept_id":payload["campaign_id"],
+        "creative_angle":payload["concept_family"].replace("_", " "),
+        "creative_hook":payload.get("campaign_id","").replace("_"," ").title(),
+        "social_caption":payload["caption"],
+        "idea":"DateTheMoment sports marketing trial",
+        "references":"Original DateTheMoment creative | dtm-marketing-trial-2",
+        "on_screen_text":payload.get("campaign_id","").replace("_"," "),
+        "duration_seconds":13,
+        "photo_urls":", ".join(payload.get("source_attribution",[])),
+        "render_run_id":stamp,
+        "status":"pending_approval", "approval_required":True,
+        "source":"dtm-marketing-trial-2", "event":"content_ready_for_review"
     })
     r=requests.post(webhook,json=payload,timeout=30)
     r.raise_for_status()
     (out/"delivery.json").write_text(json.dumps({
         "video_url":video,"cover_url":cover,"webhook_delivery":"success","approval_required":True
     },ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print("Wysłano do Make do zatwierdzenia:",video)
+    print("Sent to Make review receiver for Telegram notification:",video)
 
 if __name__=="__main__":
     main()
