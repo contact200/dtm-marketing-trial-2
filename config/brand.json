@@ -1,0 +1,29 @@
+{
+  "name": "DateTheMoment",
+  "full_name": "DateTheMoment · Sports Photography & Automated Marketing",
+  "tagline": "You live the moment. DateTheMoment makes sure it doesn't disappear.",
+  "website": "https://www.datethemoment.com/",
+  "website_url": "https://www.datethemoment.com/",
+  "email": "contact@datethemoment.com",
+  "market": "Chicagoland sports clubs and photographers",
+  "colors": {
+    "white": "#FAFBFF",
+    "black": "#0B0D13",
+    "royal_blue": "#2453E7",
+    "teal_optional": "#14AEBE",
+    "orange_optional": "#FF8A59"
+  },
+  "rules": [
+    "Never invent match results, player names, performance metrics, clients, prices or testimonials.",
+    "Never synthesize people, hands or faces in motion graphics.",
+    "Only use owner-approved sports photos; no scraped source images.",
+    "Preserve each club's voice; no generic recycled factual claims.",
+    "Human approval required before publishing anything.",
+    "Trial credentials, buckets and webhooks must remain separate from production."
+  ],
+  "verified_facts": [
+    "Sports photography and online gallery delivery",
+    "Marketing automation for existing approved sports images",
+    "Instagram and Facebook publishing workflows"
+  ]
+}
