@@ -244,6 +244,8 @@ def main():
     (out/"caption.txt").write_text(c["caption"]+"\n",encoding="utf-8")
     payload={"business":brand["name"],"language":"en-US","campaign_id":c["id"],"concept_family":c["theme"],
         "visual_mode":visual_mode,"copy_variant":variant_index,"date":args.date,"caption":c["caption"],
+        "creative_angle":c["name"],"creative_hook":c["hook"],
+        "on_screen_text":" | ".join((c["hook"],c["second"],c["closing"])),
         "website_url":brand["website"],"status":"pending_approval","approval_required":True,
         "photo_count":len(chosen),"video_file":"reel.mp4" if not args.no_video else None,
         "cover_file":"cover.jpg","source_attribution":[str(p.relative_to(ROOT)) for p in chosen] if chosen else ["original abstract motion graphics"]}
