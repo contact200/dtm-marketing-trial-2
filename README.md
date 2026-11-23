@@ -1,5 +1,13 @@
 # DateTheMoment / TRIAL SOCIAL STUDIO
 
+## Send trial reels to your existing Telegram bot (no new secrets)
+
+**[Run DTM Trial 2 → Existing Make / Telegram](https://github.com/contact200/datethemoment-motion/actions/workflows/dtm-trial-2-to-make.yml)** in your existing `datethemoment-motion` repository. Click **Run workflow**, choose a concept or `auto`, and the main GitHub workflow checks out this trial generator, renders the video, and sends its MP4 + matching caption straight to your **existing Make review webhook**. Make performs Supabase upload and Telegram notification exactly as it does for the main DateTheMoment and Kosówka review videos.
+
+This project stays the creative source; the main repository owns the **Monday/Wednesday/Friday delivery schedule** and the existing Make webhook secret. No trial Supabase keys, new buckets, or duplicated Telegram settings are needed.
+
+The workflow in **this trial repository is preview-only** if you just want to download the MP4. It does not attempt delivery or require credentials.
+
 Separate experimental marketing studio for DateTheMoment. Based on the same automation architecture as the Kosówka project, with **new sports-marketing concepts and a DateTheMoment design language**.
 
 **Outputs:** 13-second 9:16 MP4, original soundtrack, JPEG cover, English caption with hashtags, and JSON metadata. **7 distinct visual concepts × 4 copy variants = 28 combinations.** This is a finite deterministic rotation, not an AI-powered never-repeating concept generator.
@@ -8,9 +16,9 @@ Separate experimental marketing studio for DateTheMoment. Based on the same auto
 
 ## First reel (works on iPad)
 
-Open [GitHub Actions](https://github.com/contact200/dtm-marketing-trial-2/actions) → **DateTheMoment Trial Social Studio** → **Run workflow**. Use `concept=auto`, `visual_mode=auto`, `deliver_to_make=false` for a local GitHub artifact only. To also deliver to Telegram through Make, configure the credentials below and use `deliver_to_make=true`. Download the completed **dtm-trial-social** artifact: `reel.mp4`, `cover.jpg`, `caption.txt`, `payload.json`.
+To download a preview only, open [this repo's GitHub Actions](https://github.com/contact200/dtm-marketing-trial-2/actions) → **DTM Trial 2 · Preview Only** → **Run workflow**. For Telegram use the main-repository workflow linked above. The preview artifact contains: `reel.mp4`, `cover.jpg`, `caption.txt`, `payload.json`.
 
-Scheduled generation happens **Monday, Wednesday and Friday at 15:00 UTC** (9 AM Chicago in winter, 10 AM in summer). Artifacts are drafts for review. **No auto-posting occurs.**
+Scheduled generation and Make delivery happen in the **main repo's new workflow**, Monday, Wednesday and Friday at 15:00 UTC (9 AM Chicago in winter, 10 AM in summer). Artifacts are drafts for review. **No auto-posting occurs.**
 
 ## 7 visual concepts
 | ID | Visual mechanism |
@@ -33,16 +41,13 @@ No photos required; default is abstract motion graphics. To use approved real ph
 ```
 You may also specify an **owner-controlled HTTPS URL** with `url`, `approved` and `name` fields. The workflow imports photos before rendering. `full_bleed_photo` requires at least one approved image. Auto mode uses full bleed for photo-centric concepts once such images exist; all other concepts remain motion graphics.
 
-## Optional Make + Supabase approval delivery
+## Existing Make + Supabase + Telegram wiring
 
-Preview rendering works without secrets. **If a delivery-enabled run lacks secrets, the video render still succeeds and GitHub shows a delivery warning and a `delivery.json` status of `configuration_required`. This does not mean Telegram received anything.** For Telegram delivery, the trial can reuse the working **DateTheMoment — Video Receiver** in Make (JSON → Sheets → Telegram), but needs its own GitHub secret configuration. Create a public Supabase Storage bucket named `dtm-trial-2-public`, or set the variable below to the existing public bucket if you wish to reuse it. In repo **Settings → Secrets and variables → Actions**, add:
-- `DTM_TRIAL_SUPABASE_URL` (secret)
-- `DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY` (secret, do not commit)
-- `DTM_TRIAL_MAKE_WEBHOOK_URL` (secret: paste the URL of your existing working **DateTheMoment — Video Receiver** webhook, which sends review messages to Telegram)
+**This trial does not upload media to Supabase by itself.** Instead, the main repo's [DTM Trial 2 → Existing Make / Telegram](https://github.com/contact200/datethemoment-motion/actions/workflows/dtm-trial-2-to-make.yml) job sends the rendered MP4 and caption as `multipart/form-data` to the **already-working** `MAKE_MOTION_REVIEW_WEBHOOK_URL`. The receiver's existing Supabase Upload File module creates the public HTTPS video URL and its Telegram module sends a review notification.
 
-Optional repo variables: `DTM_TRIAL_SUPABASE_BUCKET=dtm-trial-2-public`, and `DTM_TRIAL_AUTO_DELIVER_TO_MAKE=true` to send scheduled drafts for approval. **Leave auto delivery off** until the Make scenario accepts drafts safely. Run manually with `deliver_to_make=true` to upload MP4/JPG to the configured public bucket and send JSON containing the receiver-required fields `concept_id`, `video_url`, `social_caption`, along with `creative_angle`, `render_run_id`, `cover_url`, `caption`, `campaign_id`, `visual_mode`, `approval_required=true`, and `status=pending_approval`. Ensure the existing receiver scenario is active and ends with **Notify video ready for review** in Telegram. If it uses a filter, keep `concept_id`, `video_url` and `social_caption` as the three required fields. The public URLs are only real after successful upload. Source photos are never sent to the public bucket. Do not connect this Make webhook directly to an Instagram Publish module.
+Make receives `video`, `concept_id`, `creative_angle`, `creative_hook`, `on_screen_text`, `social_caption`, `visual_mode`, `render_run_id`, `status=READY_FOR_REVIEW`, and `video_url=pending_make_upload` (compatibility field until Make creates the real public URL). These values match the currently operational main workflow's form schema.
 
-**On iPad:** [Open this repo's GitHub Actions secrets](https://github.com/contact200/dtm-marketing-trial-2/settings/secrets/actions). GitHub does not let you read or copy secrets from another repository, so enter the values again using your own Make webhook URL and Supabase credentials. Never paste service-role credentials in a chat, commit or README.
+Video delivery is for **review only**; do not connect the review receiver directly to an Instagram publishing module.
 
 ## Local test
 Python 3.12 + FFmpeg:
@@ -53,6 +58,6 @@ python scripts/render.py --concept calendar_fills --visual-mode motion_graphic -
 python scripts/render.py --concept club_voice --no-video --size 720x1280 --output outputs/preview
 ```
 
-Production repo `datethemoment-motion` is unchanged, with no shared secrets or workflow changes.
+The main `datethemoment-motion` repository now contains one additional isolated wrapper workflow; its existing publishing workflows are unchanged.
 
 **You live the moment. DateTheMoment makes sure it doesn't disappear.**
