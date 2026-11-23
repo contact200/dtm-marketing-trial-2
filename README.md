@@ -35,7 +35,7 @@ You may also specify an **owner-controlled HTTPS URL** with `url`, `approved` an
 
 ## Optional Make + Supabase approval delivery
 
-Preview rendering works without secrets. **A delivery-enabled run now errors clearly if connection secrets are missing.** For Telegram delivery, the trial can reuse the working **DateTheMoment — Video Receiver** in Make (JSON → Sheets → Telegram), but needs its own GitHub secret configuration. Create a public Supabase Storage bucket named `dtm-trial-2-public`, or set the variable below to the existing public bucket if you wish to reuse it. In repo **Settings → Secrets and variables → Actions**, add:
+Preview rendering works without secrets. **If a delivery-enabled run lacks secrets, the video render still succeeds and GitHub shows a delivery warning and a `delivery.json` status of `configuration_required`. This does not mean Telegram received anything.** For Telegram delivery, the trial can reuse the working **DateTheMoment — Video Receiver** in Make (JSON → Sheets → Telegram), but needs its own GitHub secret configuration. Create a public Supabase Storage bucket named `dtm-trial-2-public`, or set the variable below to the existing public bucket if you wish to reuse it. In repo **Settings → Secrets and variables → Actions**, add:
 - `DTM_TRIAL_SUPABASE_URL` (secret)
 - `DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY` (secret, do not commit)
 - `DTM_TRIAL_MAKE_WEBHOOK_URL` (secret: paste the URL of your existing working **DateTheMoment — Video Receiver** webhook, which sends review messages to Telegram)

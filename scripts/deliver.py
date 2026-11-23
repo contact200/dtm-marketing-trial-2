@@ -28,6 +28,30 @@ def upload(base,key,bucket,filepath,keyname):
         check.close()
     return public
 
+def record_status(out, status, message, missing=None, extra=None):
+    """Keep rendering independent of optional delivery and make the result explicit."""
+    status_data={
+        "status":status,
+        "delivered_to_make":status=="sent_to_make",
+        "telegram_delivery_verified":False,
+        "message":message,
+    }
+    if missing:
+        status_data["missing_settings"]=missing
+    if extra:
+        status_data.update(extra)
+    (out/"delivery.json").write_text(json.dumps(status_data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    summary=os.getenv("GITHUB_STEP_SUMMARY","")
+    if summary:
+        with Path(summary).open("a",encoding="utf-8") as f:
+            f.write("\n## DateTheMoment delivery\n\n")
+            f.write("**"+status.replace("_"," ").title()+"** — "+message+"\n\n")
+            if missing:
+                f.write("Missing Actions secrets: "+", ".join("`"+name+"`" for name in missing)+"\n\n")
+                f.write("[Configure repository secrets](https://github.com/contact200/dtm-marketing-trial-2/settings/secrets/actions)\n\n")
+            f.write("The generated MP4, cover, and caption remain in the run's **Artifacts** section.\n")
+    return status_data
+
 def main():
     out=Path(sys.argv[1] if len(sys.argv)>1 else "outputs/latest")
     payload=json.loads((out/"payload.json").read_text(encoding="utf-8"))
@@ -37,7 +61,9 @@ def main():
     webhook=os.getenv("DTM_TRIAL_MAKE_WEBHOOK_URL","")
     enabled=os.getenv("DTM_TRIAL_DELIVER_TO_MAKE","").strip().lower()=="true"
     if not enabled:
-        print("Preview only: Make and Telegram delivery disabled.")
+        message="Preview only: Make/Telegram delivery was not requested."
+        print("::notice::"+message)
+        record_status(out,"preview_only",message)
         return
     if not(base and service and webhook):
         missing=[name for name,value in (
@@ -45,7 +71,10 @@ def main():
             ("DTM_TRIAL_SUPABASE_SERVICE_ROLE_KEY",service),
             ("DTM_TRIAL_MAKE_WEBHOOK_URL",webhook),
         ) if not value]
-        raise SystemExit("Delivery was requested, but required GitHub Actions secrets are missing: "+", ".join(missing))
+        message="Video was rendered, but Make and Telegram were NOT contacted. Configure the missing GitHub Actions secrets to enable delivery."
+        print("::warning title=Telegram delivery not configured::"+message+" Missing: "+", ".join(missing))
+        record_status(out,"configuration_required",message,missing=missing)
+        return
     if not (out/"reel.mp4").is_file():
         raise SystemExit("Make delivery requested but reel.mp4 is missing")
     stamp=os.getenv("GITHUB_RUN_ID",datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S"))
@@ -69,10 +98,10 @@ def main():
     })
     r=requests.post(webhook,json=payload,timeout=30)
     r.raise_for_status()
-    (out/"delivery.json").write_text(json.dumps({
+    record_status(out,"sent_to_make","Make webhook accepted the video review request. Telegram confirmation is handled by Make.",extra={
         "video_url":video,"cover_url":cover,"webhook_delivery":"success","approval_required":True
-    },ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print("Sent to Make review receiver for Telegram notification:",video)
+    })
+    print("Sent to Make review receiver (Telegram confirmation not verified):",video)
 
 if __name__=="__main__":
     main()

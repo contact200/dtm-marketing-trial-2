@@ -14,13 +14,20 @@ delivery=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(delivery)
 
 class MakeDeliveryTests(unittest.TestCase):
-    def test_delivery_enabled_without_secrets_fails_loudly(self):
+    def test_delivery_missing_secrets_keeps_artifact_and_marks_undelivered(self):
         with tempfile.TemporaryDirectory() as tmp:
             out=Path(tmp)
             (out/"payload.json").write_text("{}",encoding="utf-8")
-            with patch.dict(os.environ,{"DTM_TRIAL_DELIVER_TO_MAKE":"true"},clear=True),patch.object(sys,"argv",["deliver.py",tmp]):
-                with self.assertRaisesRegex(SystemExit,"DTM_TRIAL_MAKE_WEBHOOK_URL"):
-                    delivery.main()
+            (out/"reel.mp4").write_bytes(b"video")
+            with patch.dict(os.environ,{"DTM_TRIAL_DELIVER_TO_MAKE":"true"},clear=True),patch.object(sys,"argv",["deliver.py",tmp]),patch.object(delivery,"upload") as upload,patch.object(delivery.requests,"post") as send:
+                delivery.main()
+                report=json.loads((out/"delivery.json").read_text())
+                self.assertEqual(report["status"],"configuration_required")
+                self.assertFalse(report["delivered_to_make"])
+                self.assertIn("DTM_TRIAL_MAKE_WEBHOOK_URL",report["missing_settings"])
+                self.assertTrue((out/"reel.mp4").exists())
+                upload.assert_not_called()
+                send.assert_not_called()
 
     def test_existing_receiver_fields_sent_with_public_url(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -51,3 +58,7 @@ class MakeDeliveryTests(unittest.TestCase):
                 self.assertEqual(outgoing["render_run_id"],"45101072570")
                 self.assertTrue(outgoing["approval_required"])
                 self.assertEqual(outgoing["source"],"dtm-marketing-trial-2")
+                report=json.loads((out/"delivery.json").read_text())
+                self.assertEqual(report["status"],"sent_to_make")
+                self.assertTrue(report["delivered_to_make"])
+                self.assertFalse(report["telegram_delivery_verified"])
